@@ -2,51 +2,52 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { bindActionCreators } from "redux";
+import { Alert } from "reactstrap";
+
 import * as productAction from "./productsActions";
 import * as usersAction from "../userComponents/usersActions";
 import * as categoriesAction from "../categoriesComponents/categoriesActions";
 import ProductsList from "./ProductsList";
-import { Redirect } from "react-router-dom";
 
 class Products extends Component {
-  state = {
-    redirectToAddProductPage: false,
-  };
-
   componentDidMount() {
     const { products, users, categories } = this.props;
 
     if (products.length === 0) {
-      this.props.loadProducts.getProductsRequest();
+      this.props.productActions.getProductsRequest();
     }
     if (users.length === 0) {
-      this.props.loadUsers.getUsersRequest();
+      this.props.usersActions.getUsersRequest();
     }
     if (categories.length === 0) {
-      this.props.loadCategories.getCategoriesRequest();
+      this.props.categoriesActions.getCategoriesRequest();
     }
   }
 
+  handleDelete = (productId) => {
+    console.log(productId);
+    this.props.productActions.deleteProductRequest(productId);
+  };
+
+  handleCloseAlert = () => {
+    this.props.productActions.productError({
+      error: "",
+    });
+  };
   render() {
     const products = this.props.products;
-    const users = this.props.users;
-    const categories = this.props.categories;
+    console.log(this.props);
     return (
       <>
-        {this.state.redirectToAddProductPage && <Redirect to="/product" />}
         <h2>Products Page</h2>
-        <button
-          style={{ marginBottom: 20 }}
-          className="btn btn-primary add-product"
-          onClick={() => this.setState({ redirectToAddProductPage: true })}
+        <Alert
+          color="danger"
+          isOpen={!!this.props.errorProducts.error}
+          toggle={this.handleCloseAlert}
         >
-          Add Product
-        </button>
-        <ProductsList
-          products={products}
-          users={users}
-          categories={categories}
-        />
+          {this.props.errorProducts.error}
+        </Alert>
+        <ProductsList products={products} onDeleteProduct={this.handleDelete} />
       </>
     );
   }
@@ -54,9 +55,9 @@ class Products extends Component {
 
 Products.propTypes = {
   products: PropTypes.array.isRequired,
-  loadProducts: PropTypes.object.isRequired,
-  loadUsers: PropTypes.object.isRequired,
-  loadCategories: PropTypes.object.isRequired,
+  productActions: PropTypes.object.isRequired,
+  usersActions: PropTypes.object.isRequired,
+  categoriesActions: PropTypes.object.isRequired,
 };
 
 function mapStateToProps(state) {
@@ -76,14 +77,15 @@ function mapStateToProps(state) {
           }),
     users: state.users.items,
     categories: state.categories.items,
+    errorProducts: state.products,
   };
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    loadProducts: bindActionCreators(productAction, dispatch),
-    loadUsers: bindActionCreators(usersAction, dispatch),
-    loadCategories: bindActionCreators(categoriesAction, dispatch),
+    productActions: bindActionCreators(productAction, dispatch),
+    usersActions: bindActionCreators(usersAction, dispatch),
+    categoriesActions: bindActionCreators(categoriesAction, dispatch),
   };
 }
 

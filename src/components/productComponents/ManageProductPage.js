@@ -15,6 +15,7 @@ function ManageProductPage({
   loadCategories,
   loadUsers,
   saveProduct,
+  updateRequest,
   history,
   ...props
 }) {
@@ -23,12 +24,10 @@ function ManageProductPage({
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    if (products.length === 0) {
-      loadProducts();
-      loadUsers();
-      loadCategories();
-    }
-  }, [loadCategories, loadProducts, loadUsers, products.length]);
+    loadProducts();
+    loadUsers();
+    loadCategories();
+  }, [loadCategories, loadProducts, loadUsers]);
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -40,7 +39,7 @@ function ManageProductPage({
 
   function handleSave(event) {
     event.preventDefault();
-    saveProduct(product);
+    product._id ? updateRequest(product) : saveProduct(product);
     history.push("/products");
   }
 
@@ -64,6 +63,7 @@ ManageProductPage.propTypes = {
   loadUsers: PropTypes.func.isRequired,
   loadCategories: PropTypes.func.isRequired,
   saveProduct: PropTypes.func.isRequired,
+  updateRequest: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
 };
 
@@ -88,6 +88,7 @@ const mapDispatchToProps = {
   loadUsers: usersAction.getUsersRequest,
   loadCategories: categoriesAction.getCategoriesRequest,
   saveProduct: productAction.createProductRequest,
+  updateRequest: productAction.updateProductsRequest,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ManageProductPage);

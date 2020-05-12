@@ -4,6 +4,8 @@ export const Types = {
   GET_USERS_FAILURE: "users/GET_USERS.FAILURE",
   CREATE_USER_REQUEST: "users/CREATE_USERS.REQUEST",
   DELETE_USER_REQUEST: "users/DELETE_USER.REQUEST",
+  USER_SIGNUP_REQUEST: "users/USER_SIGNUP.REQUEST",
+  USER_SIGNUP_SUCCESS: "users/USER_SIGNUP.SUCCESS",
 };
 
 export const getUsersRequest = () => ({
@@ -14,6 +16,21 @@ export const getUsersSuccess = ({ items }) => ({
   type: Types.GET_USERS_SUCCESS,
   payload: {
     items,
+  },
+});
+
+export const signUpUserRequest = ({
+  firstName,
+  lastName,
+  email,
+  password,
+}) => ({
+  type: Types.USER_SIGNUP_REQUEST,
+  payload: {
+    firstName,
+    lastName,
+    email,
+    password,
   },
 });
 

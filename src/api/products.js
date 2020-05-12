@@ -13,3 +13,18 @@ export const createProduct = ({ name, userId, category, price, units }) => {
     units,
   });
 };
+
+export const updateProduct = ({ id, name, userId, category, price, units }) => {
+  return axios.put(`/api/products/${id}`, {
+    id,
+    name,
+    userId,
+    category,
+    price,
+    units,
+  });
+};
+
+export const deleteProduct = (productId) => {
+  return axios.delete(`/api/products/${productId}`);
+};

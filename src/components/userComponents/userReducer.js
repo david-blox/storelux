@@ -18,6 +18,12 @@ export default function users(state = INITIAL_STATE, action) {
         error: action.payload.error,
       };
     }
+    case Types.CREATE_USER_REQUEST: {
+      return {
+        ...state,
+        items: action.payload.items,
+      };
+    }
     default: {
       return state;
     }

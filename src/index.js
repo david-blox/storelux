@@ -1,17 +1,18 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import App from "./components/App";
-import "./index.css";
-import * as serviceWorker from "./serviceWorker";
-import axios from "axios";
-import reducers from "./redux/rootReducers";
 import { Provider as ReduxProvider } from "react-redux";
 import { BrowserRouter as Router } from "react-router-dom";
 import { createStore, applyMiddleware } from "redux";
+import axios from "axios";
 import { composeWithDevTools } from "redux-devtools-extension";
 import createSagaMiddleware from "redux-saga";
+
+import App from "./components/App";
+import * as serviceWorker from "./serviceWorker";
+import reducers from "./redux/rootReducers";
 import rootSaga from "./redux/rootSaga";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "./index.css";
 
 axios.defaults.withCredentials = true;
 axios.defaults.baseURL = "http://localhost:3001";

@@ -27,6 +27,7 @@ const TextInput = ({
           placeholder={placeholder}
           value={value}
           onChange={onChange}
+          required
         />
         {error && <div className="alert alert-danger">{error}</div>}
       </div>

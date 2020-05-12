@@ -1,0 +1,50 @@
+.modal__header {
+  width: 100%;
+  padding: 1rem 0.5rem;
+  color: #0069D9;
+}
+
+.modal__header h2 {
+  font-size: 1.5rem;
+  margin: 0.5rem;
+}
+
+.modal__content {
+  padding: 1rem 0.5rem;
+}
+
+.modal__footer {
+  padding: 1rem 0.5rem;
+}
+
+@media (min-width: 768px) {
+  .modal {
+    left: calc(50% - 20rem);
+    width: 40rem;
+  }
+}
+
+.modal-enter {
+  transform: translateY(-10rem);
+  opacity: 0;
+}
+
+.modal-enter-active {
+  transform: translateY(0);
+  opacity: 1;
+  transition: all 200ms;
+}
+
+.modal-exit {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.modal-exit-active {
+  transform: translateY(-10rem);
+  opacity: 0;
+  transition: all 200ms;
+}
+.add_to_cart_btn {
+  margin-right: 1rem;
+}

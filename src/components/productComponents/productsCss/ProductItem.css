@@ -1,0 +1,21 @@
+.product-item__modal-content {
+  padding: 0;
+}
+
+.product-item__modal-actions {
+  text-align: right;
+}
+
+.product-item__actions button,
+.product-item__actions a {
+  margin: 0.5rem;
+}
+.displat_box {
+  display: block;
+  width: 100%;
+}
+.product-window {
+  display: block;
+  z-index: 2000;
+  width: 100%;
+}
