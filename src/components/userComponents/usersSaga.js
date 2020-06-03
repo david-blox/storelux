@@ -32,10 +32,11 @@ function* signUpUser(action) {
       email: action.payload.email,
       password: action.payload.password,
     });
-    console.log(user);
+    yield put(actions.signUpUserSuccess());
+    console.log(user.data);
   } catch (e) {
     yield put(
-      actions.userError({
+      actions.userSignUpError({
         error: "an error happend when trying add new user",
       })
     );

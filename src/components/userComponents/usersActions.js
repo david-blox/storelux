@@ -6,6 +6,7 @@ export const Types = {
   DELETE_USER_REQUEST: "users/DELETE_USER.REQUEST",
   USER_SIGNUP_REQUEST: "users/USER_SIGNUP.REQUEST",
   USER_SIGNUP_SUCCESS: "users/USER_SIGNUP.SUCCESS",
+  USER_SIGNUP_FAILURE: "users/USER_SIGNUP.FAILURE",
 };
 
 export const getUsersRequest = () => ({
@@ -34,8 +35,18 @@ export const signUpUserRequest = ({
   },
 });
 
+export const signUpUserSuccess = () => ({
+  type: Types.USER_SIGNUP_SUCCESS,
+});
+
 export const userError = ({ error }) => ({
   type: Types.GET_USERS_FAILURE,
+  payload: {
+    error,
+  },
+});
+export const userSignUpError = ({ error }) => ({
+  type: Types.USER_SIGNUP_FAILURE,
   payload: {
     error,
   },

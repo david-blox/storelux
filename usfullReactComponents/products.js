@@ -4,10 +4,10 @@ import PropTypes from "prop-types";
 import { bindActionCreators } from "redux";
 import { Alert } from "reactstrap";
 
-import * as productAction from "./productsActions";
-import * as usersAction from "../userComponents/usersActions";
-import * as categoriesAction from "../categoriesComponents/categoriesActions";
-import ProductsList from "./ProductsList";
+import * as productAction from "../src/components/productComponents/productsActions";
+import * as usersAction from "../src/components/userComponents/usersActions";
+import * as categoriesAction from "../src/components/categoriesComponents/categoriesActions";
+import ProductsList from "../src/components/productComponents/ProductList";
 
 class Products extends Component {
   componentDidMount() {
@@ -36,7 +36,6 @@ class Products extends Component {
   };
   render() {
     const products = this.props.products;
-    console.log(this.props);
     return (
       <>
         <h2>Products Page</h2>

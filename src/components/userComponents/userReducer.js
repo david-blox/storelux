@@ -24,6 +24,12 @@ export default function users(state = INITIAL_STATE, action) {
         items: action.payload.items,
       };
     }
+    case Types.USER_SIGNUP_FAILURE: {
+      return {
+        ...state,
+        error: action.payload.error,
+      };
+    }
     default: {
       return state;
     }

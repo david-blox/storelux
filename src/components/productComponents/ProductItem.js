@@ -1,70 +1,120 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useContext } from "react";
 
+import Card from "../common/UIElements/Card";
+import Button from "../common/FormElements/Button";
 import Modal from "../common/UIElements/Modal";
+import ErrorModal from "../common/UIElements/ErrorModal";
+import LoadingSpinner from "../common/UIElements/LoadingSpinner";
+import { AuthContext } from "../common/context/auth-context";
+import { useHttpClient } from "../hooks/http-hook";
 import "./productsCss/ProductItem.css";
 
 const ProductItem = (props) => {
+  const { isLoading, sendRequest, error, clearError } = useHttpClient();
+  const auth = useContext(AuthContext);
   const [showProduct, setShowProduct] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   const openProductHandler = () => setShowProduct(true);
 
   const closeProductHandler = () => setShowProduct(false);
 
+  const showDeleteHandler = () => {
+    setShowConfirmModal(true);
+  };
+
+  const cancelDeleteHandler = () => {
+    setShowConfirmModal(false);
+  };
+
+  const confirmDeleteHandler = async () => {
+    setShowConfirmModal(false);
+    try {
+      await sendRequest(
+        `http://localhost:5000/api/products/${props.id}`,
+        "DELETE"
+      );
+      console.log(props.id);
+
+      // sending the requested product id in order to filter the new products array
+      //and display the products without the deleted product
+      props.onDelete(props.id);
+    } catch (err) {}
+  };
   return (
     <>
+      <ErrorModal error={error} onClear={clearError} />
       <Modal
         show={showProduct}
         onCancel={closeProductHandler}
-        header={props.name}
-        className="display_box"
+        header={props.title}
         contentClass="product-item__modal-content"
-        footerClass="product-item__modal-actions "
+        footerClass="product-item__modal-actions"
+        footer={<Button onClick={closeProductHandler}>CLOSE</Button>}
+      >
+        <div className="info-container">
+          <h2>PRODUCT!!</h2>
+        </div>
+      </Modal>
+      <Modal
+        show={showConfirmModal}
+        onCancel={cancelDeleteHandler}
+        header="Are you sure?"
+        footerClass="product-item__modal-actions"
         footer={
           <>
-            <button className="btn btn-outline-success add_to_cart_btn">
-              Add to Cart
-            </button>
-            <button
-              className="btn btn-outline-info"
-              onClick={closeProductHandler}
-            >
-              CLOSE
-            </button>
+            <Button inverse onClick={cancelDeleteHandler}>
+              CANCEL
+            </Button>
+            <Button danger onClick={confirmDeleteHandler}>
+              DELETE
+            </Button>
           </>
         }
       >
-        <div className="product-window">
-          {/* will add image and more details insde */}
-          <h2>Product INFO!</h2>
-          <div>{props.userName}</div>
-          <div>{props.price}</div>
-          <div>{props.units}</div>
-        </div>
+        <p>
+          Do you want to proceed and delete this product? Please note that it
+          can't be undone thereafter.
+        </p>
       </Modal>
-      <tr key={props.id}>
-        <td>
-          <Link to={`/product/${props.id}`}>{props.name}</Link>
-        </td>
-        <td>{props.userName}</td>
-        <td>{props.category}</td>
-        <td>{props.price}</td>
-        <td>{props.units}</td>
-        <td>
-          <div style={{ display: "flex" }}>
-            <button
-              className="btn btn-outline-info"
-              style={{ marginRight: "1rem" }}
-              onClick={openProductHandler}
-            >
-              View
-            </button>
-            <button className="btn btn-outline-danger" onClick={props.onClick}>
-              Delete
-            </button>
+      <li className="product-item">
+        <Card className="product-item__content">
+          {isLoading && <LoadingSpinner asOverlay />}
+
+          <div className="product-item__header">
+            <h2>{props.title}</h2>
           </div>
-        </td>
-      </tr>
+          <div className="product-item__info-wrapper">
+            <div className="product-item__info">
+              <h4>Category: {props.category}</h4>
+              <h4>Price:</h4>
+              <p>{`${props.price} $`}</p>
+              <h4>Units Available:</h4>
+              <p>
+                {`${props.units}`} {props.units === 1 ? "unit" : "units"}
+              </p>
+              <h4>Description:</h4>
+              <p>{props.description}</p>
+            </div>
+            <div className="product-item__image">
+              <img src={props.image} alt={props.title} />
+            </div>
+          </div>
+          <div className="product-item__actions">
+            <Button inverse onClick={openProductHandler}>
+              VIEW PRODUCT
+            </Button>
+            {auth.userId === props.creatorId && (
+              <Button to={`/product/${props.id}`}>EDIT</Button>
+            )}
+            {auth.userId === props.creatorId && (
+              <Button danger onClick={showDeleteHandler}>
+                DELETE
+              </Button>
+            )}
+          </div>
+        </Card>
+      </li>
     </>
   );
 };

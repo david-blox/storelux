@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import * as productAction from "./productsActions";
-import * as usersAction from "../userComponents/usersActions";
-import * as categoriesAction from "../categoriesComponents/categoriesActions";
+import * as productAction from "../src/components/productComponents/productsActions";
+import * as usersAction from "../src/components/userComponents/usersActions";
+import * as categoriesAction from "../src/components/categoriesComponents/categoriesActions";
 import ProductForm from "./ProductForm";
 import { newProduct } from "./newProductFormat";
 

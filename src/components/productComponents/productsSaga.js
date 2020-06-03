@@ -1,7 +1,6 @@
 import { takeLatest, take, call, put, fork } from "redux-saga/effects";
 import * as actions from "./productsActions";
 import * as api from "../../api/products";
-// import * as api from "../../api/api";
 
 function* getProducts() {
   try {

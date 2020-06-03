@@ -11,11 +11,11 @@ import App from "./components/App";
 import * as serviceWorker from "./serviceWorker";
 import reducers from "./redux/rootReducers";
 import rootSaga from "./redux/rootSaga";
-import "bootstrap/dist/css/bootstrap.min.css";
+// import "bootstrap/dist/css/bootstrap.min.css";
 import "./index.css";
 
 axios.defaults.withCredentials = true;
-axios.defaults.baseURL = "http://localhost:3001";
+axios.defaults.baseURL = "http://localhost:5000";
 
 const sagaMiddleware = createSagaMiddleware();
 
