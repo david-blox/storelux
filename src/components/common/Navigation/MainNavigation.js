@@ -1,13 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Link } from "react-router-dom";
 
 import MainHeader from "./MainHeader";
 import NavLinks from "./NavLinks";
 import SideDrawer from "./SideDrawer";
 import Backdrop from "../UIElements/Backdrop";
+import { AuthContext } from "../context/auth-context";
 import "./MainNavigation.css";
 
 const MainNavigation = (props) => {
+  const auth = useContext(AuthContext);
   const [drawerIsOpen, setDrawerIsOpen] = useState(false);
 
   const openDrawerHandler = () => {
@@ -35,7 +37,7 @@ const MainNavigation = (props) => {
           <span />
         </button>
         <h1 className="main-navigation__title">
-          <Link to="/u1/products">YourProducts</Link>
+          <Link to={`/${auth.userId}/products`}>YourProducts</Link>
         </h1>
         <nav className="main-navigation__header-nav">
           <NavLinks />

@@ -13,7 +13,7 @@ import {
 import { useForm } from "../hooks/form-hook";
 import { useHttpClient } from "../hooks/http-hook";
 import { AuthContext } from "../common/context/auth-context";
-import "./Auth.css";
+import "./usersCss/Auth.css";
 
 const Auth = () => {
   const auth = useContext(AuthContext);

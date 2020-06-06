@@ -1,11 +1,9 @@
 import React, { useState, useCallback } from "react";
 import { Route, Switch, Redirect } from "react-router-dom";
 
-// import Products from "./productComponents/products";
 import HomePage from "./home/HomePage";
 import AboutPage from "./about/AboutPage";
 import MainNavigation from "../components/common/Navigation/MainNavigation";
-// import ManageProductPage from "./productComponents/ManageProductPage";
 // import PageNotFound from "./common/PageNoFound";
 import AllProducts from "../components/productComponents/AllProducts";
 import NewProduct from "./productComponents/NewProduct";
@@ -14,6 +12,8 @@ import UserProducts from "./productComponents/UserProducts";
 import Auth from "./userComponents/Auth";
 import { AuthContext } from "./common/context/auth-context";
 import Users from "./userComponents/Users";
+import UserProfile from "./userComponents/UserProfile";
+import UpdateUserProfile from "./userComponents/UpdateUserProfile";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -36,6 +36,8 @@ function App() {
       <Switch>
         <Route exact path="/" component={HomePage} />
         <Route exact path="/users" component={Users} />
+        <Route exact path="/user/profile" component={UserProfile} />
+        <Route exact path="/user/:userId" component={UpdateUserProfile} />
         <Route path="/products" component={AllProducts} />
         <Route exact path="/:userId/products" component={UserProducts} />
         <Route exact path="/product/new" component={NewProduct} />

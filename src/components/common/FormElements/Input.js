@@ -71,7 +71,7 @@ const Input = (props) => {
 
   return (
     <div
-      className={`form-box ${
+      className={`form-box ${props.classInput} ${
         !inputState.isValid && inputState.isTouched && "form-box--invalid"
       }`}
     >

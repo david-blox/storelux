@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 import Avatar from "../common/UIElements/Avatar";
 import Card from "../common/UIElements/Card";
-import "./UserItem.css";
+import "./usersCss/UserItem.css";
 
 const UserItem = (props) => {
   return (
@@ -17,7 +17,7 @@ const UserItem = (props) => {
             <h2>{`${props.firstName} ${props.lastName}`}</h2>
             <h3>
               {props.productCount}{" "}
-              {props.productCount === 1  ? "Product" : "Products"}
+              {props.productCount === 1 ? "Product" : "Products"}
             </h3>
           </div>
         </Link>
