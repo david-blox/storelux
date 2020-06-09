@@ -6,6 +6,7 @@ const VALIDATOR_TYPE_MIN = "MIN";
 const VALIDATOR_TYPE_MAX = "MAX";
 const VALIDATOR_TYPE_EMAIL = "EMAIL";
 const VALIDATOR_TYPE_FILE = "FILE";
+const VALIDATOR_TYPE_SELECT = "REQUIRE_SELECT";
 
 export const VALIDATOR_REQUIRE = () => ({ type: VALIDATOR_TYPE_REQUIRE });
 export const VALIDATOR_FILE = () => ({ type: VALIDATOR_TYPE_FILE });
@@ -23,12 +24,19 @@ export const VALIDATOR_MIN_NUMBER = () => ({
   type: VALIDATOR_TYPE_MIN_NUMBER,
 });
 export const VALIDATOR_EMAIL = () => ({ type: VALIDATOR_TYPE_EMAIL });
+export const VALIDATOR_SELECT = (val) => ({
+  type: VALIDATOR_TYPE_SELECT,
+  val: val,
+});
 
 export const validate = (value, validators) => {
   let isValid = true;
   for (const validator of validators) {
     if (validator.type === VALIDATOR_TYPE_REQUIRE) {
       isValid = isValid && value.trim().length > 0;
+    }
+    if (validator.type === VALIDATOR_TYPE_SELECT) {
+      isValid = isValid && value !== validator.val;
     }
     if (validator.type === VALIDATOR_TYPE_MINLENGTH) {
       isValid = isValid && value.trim().length >= validator.val;

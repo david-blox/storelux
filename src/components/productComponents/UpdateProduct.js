@@ -5,6 +5,7 @@ import {
   VALIDATOR_REQUIRE,
   VALIDATOR_MIN_NUMBER,
   VALIDATOR_MINLENGTH,
+  VALIDATOR_SELECT,
 } from "../common/util/InputValidators";
 import Input from "../common/FormElements/Input";
 import Button from "../common/FormElements/Button";
@@ -20,6 +21,9 @@ const UpdateProduct = () => {
   const auth = useContext(AuthContext);
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const [loadedProduct, setLoadedProduct] = useState();
+  const [loadedCategories, setLoadedCategories] = useState();
+  console.log(loadedProduct);
+  console.log(loadedCategories);
 
   const productId = useParams().productId;
   const history = useHistory();
@@ -53,6 +57,12 @@ const UpdateProduct = () => {
   let moveToTop = useRef();
 
   useEffect(() => {
+    const fetchCategories = async () => {
+      const responseDataCategories = await sendRequest(
+        "http://localhost:5000/api/categories"
+      );
+      setLoadedCategories(responseDataCategories.categories);
+    };
     const fetchProduct = async () => {
       try {
         const responseData = await sendRequest(
@@ -93,6 +103,7 @@ const UpdateProduct = () => {
       } catch (err) {}
     };
     fetchProduct();
+    fetchCategories();
   }, [sendRequest, productId, setFormData]);
 
   const updateSubmitHandler = async (event) => {
@@ -137,7 +148,7 @@ const UpdateProduct = () => {
   return (
     <>
       <ErrorModal error={error} onClear={clearError} />
-      {!isLoading && loadedProduct && (
+      {!isLoading && loadedProduct && loadedCategories && (
         <form
           className="product-form"
           onSubmit={updateSubmitHandler}
@@ -154,12 +165,25 @@ const UpdateProduct = () => {
             initialValue={loadedProduct.title}
             initialValid={true}
           />
-          <Input
+          {/* <Input
             id="category"
             element="input"
             type="text"
             label="Category"
             validators={[VALIDATOR_REQUIRE()]}
+            errorText="Please enter a valid Category."
+            onInput={inputHandler}
+            initialValue={loadedProduct.category}
+            initialValid={true}
+          /> */}
+          <Input
+            id="category"
+            element="select"
+            label="Category"
+            type="select"
+            value={loadedProduct.category}
+            options={loadedCategories}
+            validators={[VALIDATOR_SELECT("Select Category")]}
             errorText="Please enter a valid Category."
             onInput={inputHandler}
             initialValue={loadedProduct.category}

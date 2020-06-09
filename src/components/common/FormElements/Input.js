@@ -60,15 +60,27 @@ const Input = (props) => {
         value={inputState.value}
       />
     ) : (
-      <textarea
-        id={props.id}
-        rows={props.rows || 4}
-        onChange={changeHandler}
-        onBlur={touchHandler}
-        value={inputState.value}
-      />
+      [
+        props.element === "select" ? (
+          <select id={props.id} onBlur={touchHandler} onChange={changeHandler}>
+            <option>{props.value}</option>
+            {props.options.map((option) => (
+              <option key={option.id} value={option.name}>
+                {option.name}
+              </option>
+            ))}
+          </select>
+        ) : (
+          <textarea
+            id={props.id}
+            rows={props.rows || 4}
+            onChange={changeHandler}
+            onBlur={touchHandler}
+            value={inputState.value}
+          />
+        ),
+      ]
     );
-
   return (
     <div
       className={`form-box ${props.classInput} ${

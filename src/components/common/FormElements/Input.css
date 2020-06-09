@@ -5,6 +5,7 @@
 
 .form-box label,
 .form-box input,
+.form-box select,
 .form-box textarea {
   display: block;
 }
@@ -15,7 +16,8 @@
 }
 
 .form-box input,
-.form-box textarea {
+.form-box textarea,
+.form-box select {
   width: 100%;
   font: inherit;
   border: 1px solid #ccc;
@@ -26,6 +28,7 @@
 }
 
 .form-box input:focus,
+.form-box select:focus,
 .form-box textarea:focus {
   outline: none;
   background: #ebebeb;
@@ -38,6 +41,7 @@
 }
 
 .form-box--invalid input,
+.form-box--invalid select,
 .form-box--invalid textarea {
   border-color: red;
   background: #ffd1d1;
