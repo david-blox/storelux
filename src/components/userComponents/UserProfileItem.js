@@ -13,7 +13,10 @@ const UserProfileItem = ({ user }) => {
         <div className="info">
           <div className="user-profile__profile-name">
             <div className="avatar-size">
-              <Avatar image={user.image} alt={user.firstName} />
+              <Avatar
+                image={`http://localhost:5000/${user.image}`}
+                alt={user.firstName}
+              />
             </div>
             <div className="user-profile__title">
               <h4>User Email:</h4>

@@ -99,15 +99,6 @@ const NewProduct = () => {
             errorText="Please enter a valid title."
             onInput={inputHandler}
           />
-          {/* <Input
-          id="category"
-          type="text"
-          element="input"
-          label="Category"
-          validators={[VALIDATOR_REQUIRE()]}
-          errorText="Please enter a valid Category."
-          onInput={inputHandler}
-        /> */}
           <Input
             id="category"
             element="select"

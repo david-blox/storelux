@@ -165,17 +165,6 @@ const UpdateProduct = () => {
             initialValue={loadedProduct.title}
             initialValid={true}
           />
-          {/* <Input
-            id="category"
-            element="input"
-            type="text"
-            label="Category"
-            validators={[VALIDATOR_REQUIRE()]}
-            errorText="Please enter a valid Category."
-            onInput={inputHandler}
-            initialValue={loadedProduct.category}
-            initialValid={true}
-          /> */}
           <Input
             id="category"
             element="select"

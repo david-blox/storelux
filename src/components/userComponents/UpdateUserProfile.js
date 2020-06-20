@@ -5,13 +5,14 @@ import Card from "../common/UIElements/Card";
 import Button from "../common/FormElements/Button";
 import LoadingSpinner from "../common/UIElements/LoadingSpinner";
 import ErrorModal from "../common/UIElements/ErrorModal";
+import UserManagment from "./UserManagmet";
+import ImageUpload from "../common/FormElements/ImageUpload";
 import Input from "../common/FormElements/Input";
 import {
   VALIDATOR_REQUIRE,
   VALIDATOR_EMAIL,
   VALIDATOR_MINLENGTH,
 } from "../common/util/InputValidators";
-import UserManagment from "./UserManagmet";
 import { useForm } from "../hooks/form-hook";
 import { useHttpClient } from "../hooks/http-hook";
 import "./usersCss/UserForm.css";
@@ -23,31 +24,7 @@ const UpdateUserProfile = () => {
   const userId = useParams().userId;
   const history = useHistory();
 
-  const [formState, inputHandler, setFormData] = useForm(
-    {
-      firstName: {
-        value: "",
-        isValid: false,
-      },
-      lastName: {
-        value: "",
-        isValid: false,
-      },
-      email: {
-        value: "",
-        isValid: false,
-      },
-      address: {
-        value: "",
-        isValid: false,
-      },
-      phone: {
-        value: "",
-        isValid: false,
-      },
-    },
-    false
-  );
+  const [formState, inputHandler, setFormData] = useForm();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -78,6 +55,10 @@ const UpdateUserProfile = () => {
               value: responseData.user.phone,
               isValid: true,
             },
+            image: {
+              value: responseData.user.image,
+              isValid: true,
+            },
           },
           true
         );
@@ -89,20 +70,21 @@ const UpdateUserProfile = () => {
 
   const updateUserSubmitHandler = async (event) => {
     event.preventDefault();
+
+    console.log(formState.inputs);
     try {
+      const formData = new FormData();
+      formData.append("email", formState.inputs.email.value);
+      formData.append("firstName", formState.inputs.firstName.value);
+      formData.append("lastName", formState.inputs.lastName.value);
+      formData.append("address", formState.inputs.address.value);
+      formData.append("phone", formState.inputs.phone.value);
+      formData.append("image", formState.inputs.image.value);
+
       await sendRequest(
         `http://localhost:5000/api/users/${userId}`,
         "PATCH",
-        JSON.stringify({
-          firstName: formState.inputs.firstName.value,
-          lastName: formState.inputs.lastName.value,
-          email: formState.inputs.email.value,
-          address: formState.inputs.address.value,
-          phone: formState.inputs.phone.value,
-        }),
-        {
-          "Content-Type": "application/json",
-        }
+        formData
       );
       history.push(`/user/profile`);
     } catch (err) {}
@@ -124,7 +106,13 @@ const UpdateUserProfile = () => {
               <div className="info">
                 <div className="user-profile__profile-name">
                   <div className="avatar-size">
-                    {/* <Avatar image={user.image} alt={user.firstName} /> */}
+                    <ImageUpload
+                      center
+                      id="image"
+                      onInput={inputHandler}
+                      initialValue={loadedUser.image}
+                      initialValid={true}
+                    />
                   </div>
                   <div className="user-profile__title">
                     <h4>User Email:</h4>

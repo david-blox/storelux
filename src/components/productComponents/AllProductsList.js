@@ -1,12 +1,22 @@
 import React from "react";
 
 import Card from "../common/UIElements/Card";
+import Button from "../common/FormElements/Button";
 import AllProductsItem from "./AllProductsItem";
 import "./productsCss/AllProductsList.css";
 
 const AllProductsList = (props) => {
   const users = props.users;
-  console.log(users);
+  if (props.items.length === 0) {
+    return (
+      <div className="product-list center">
+        <Card>
+          <h2>No Products Found. Maybe add one?</h2>
+          <Button to="/product/new">Add Product</Button>
+        </Card>
+      </div>
+    );
+  }
   return (
     <div className="products-list__table">
       <Card>
