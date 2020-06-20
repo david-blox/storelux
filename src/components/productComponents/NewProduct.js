@@ -5,6 +5,7 @@ import Input from "../common/FormElements/Input";
 import Button from "../common/FormElements/Button";
 import ErrorModal from "../common/UIElements/ErrorModal";
 import LoadingSpinner from "../common/UIElements/LoadingSpinner";
+import ImageUpload from "../common/FormElements/ImageUpload";
 import {
   VALIDATOR_REQUIRE,
   VALIDATOR_MINLENGTH,
@@ -42,6 +43,10 @@ const NewProduct = () => {
         value: "",
         isValid: false,
       },
+      image: {
+        value: null,
+        isValid: false,
+      },
     },
     false
   );
@@ -64,21 +69,15 @@ const NewProduct = () => {
   const productSubmitHandler = async (event) => {
     event.preventDefault();
     try {
-      await sendRequest(
-        "http://localhost:5000/api/products",
-        "POST",
-        JSON.stringify({
-          title: formState.inputs.title.value,
-          category: formState.inputs.category.value,
-          price: formState.inputs.price.value,
-          units: formState.inputs.units.value,
-          description: formState.inputs.description.value,
-          creator: auth.userId,
-        }),
-        {
-          "Content-Type": "application/json",
-        }
-      );
+      const formData = new FormData();
+      formData.append("title", formState.inputs.title.value);
+      formData.append("category", formState.inputs.category.value);
+      formData.append("price", formState.inputs.price.value);
+      formData.append("units", formState.inputs.units.value);
+      formData.append("description", formState.inputs.description.value);
+      formData.append("creator", auth.userId);
+      formData.append("image", formState.inputs.image.value);
+      await sendRequest("http://localhost:5000/api/products", "POST", formData);
       history.push("/");
     } catch (err) {}
   };
@@ -107,7 +106,7 @@ const NewProduct = () => {
             value="Select Category"
             options={loadedCategories.map((category) => ({
               name: category.name,
-              id: category.name,
+              id: category.id,
             }))}
             validators={[VALIDATOR_SELECT("Select Category")]}
             errorText="Please enter a valid Category."
@@ -139,7 +138,17 @@ const NewProduct = () => {
             errorText="Please enter a valid description (at least 5 characters)."
             onInput={inputHandler}
           />
-          <Button type="submit" disabled={!formState.isValid}>
+          <ImageUpload
+            id="image"
+            classImage="imagePreview"
+            onInput={inputHandler}
+            errorText="Please provide an image."
+          />
+          <Button
+            type="submit"
+            buttonClass="btnProductSubmit"
+            disabled={!formState.isValid}
+          >
             ADD PRODUCT
           </Button>
         </form>

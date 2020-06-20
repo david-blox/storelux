@@ -25,10 +25,10 @@ const UserProfileItem = ({ user }) => {
           </div>
           <div className="user-profile__profile-info">
             <div className="user-profile__profile-info__title">
-              <label>First Name:</label>
-              <label>Last Name:</label>
-              <label>Address:</label>
-              <label>Phone Number:</label>
+              <label className="profile_label">First Name:</label>
+              <label className="profile_label">Last Name:</label>
+              <label className="profile_label">Address:</label>
+              <label className="profile_label">Phone Number:</label>
             </div>
             <div className="user-profile__profile-info__content">
               <p>{user.firstName}</p>

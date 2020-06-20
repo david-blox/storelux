@@ -52,14 +52,17 @@ const ImageUpload = (props) => {
         onChange={pickedHanler}
       />
       <div className={`image-upload ${props.center && "center"}`}>
-        <div className="image-upload__preview">
+        <div className={`image-upload__preview ${props.classImage}`}>
           {previewUrl && <img src={previewUrl} alt="preview" />}
-          {!previewUrl && (
-            <img
-              src={`http://localhost:5000/${props.initialValue}`}
-              alt="preview"
-            />
-          )}
+          {!previewUrl &&
+            (props.initialValue ? (
+              <img
+                src={`http://localhost:5000/${props.initialValue}`}
+                alt="preview"
+              />
+            ) : (
+              <p>Please pick an image</p>
+            ))}
         </div>
         <Button
           type="button"

@@ -8,3 +8,15 @@
   border-radius: 6px;
   background: white;
 }
+.imagePreview {
+  width: 8rem;
+  height: 8rem;
+  border-radius: 5%;
+}
+
+.imagePreview img {
+  border-radius: 5%;
+}
+.btnProductSubmit {
+  margin-top: 1rem;
+}

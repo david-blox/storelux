@@ -38,7 +38,7 @@ const AllProductsList = (props) => {
                 <AllProductsItem
                   key={product.id}
                   id={product.id}
-                  image={product.image}
+                  image={`http://localhost:5000/${product.image}`}
                   title={product.title}
                   creatorId={users.map((user) =>
                     user.id === product.creator

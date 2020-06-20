@@ -97,7 +97,10 @@ const ProductItem = (props) => {
               <p>{props.description}</p>
             </div>
             <div className="product-item__image">
-              <img src={props.image} alt={props.title} />
+              <img
+                src={`http://localhost:5000/${props.image}`}
+                alt={props.title}
+              />
             </div>
           </div>
           <div className="product-item__actions">
