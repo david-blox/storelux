@@ -1,4 +1,5 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { connect } from "react-redux";
 
 import Input from "../common/FormElements/Input";
 import Button from "../common/FormElements/Button";
@@ -11,15 +12,15 @@ import {
   VALIDATOR_REQUIRE,
 } from "../common/util/InputValidators";
 import { useForm } from "../hooks/form-hook";
-import { useHttpClient } from "../hooks/http-hook";
-import { AuthContext } from "../common/context/auth-context";
+import * as actionTypes from "./usersActions/authActions";
+
 import "./usersCss/Auth.css";
 
-const Auth = () => {
-  const auth = useContext(AuthContext);
+const Auth = ({ onAuth, onLogin, loading, error }) => {
   const [isLoginMode, setIsLoginMode] = useState(true);
-
-  const { isLoading, error, sendRequest, clearError } = useHttpClient();
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
+  let moveToTop = useRef();
 
   const [formState, inputHandler, setFormData] = useForm(
     {
@@ -68,51 +69,48 @@ const Auth = () => {
     event.preventDefault();
 
     if (isLoginMode) {
-      try {
-        const responseData = await sendRequest(
-          "http://localhost:5000/api/users/login",
-          "POST",
-          JSON.stringify({
-            email: formState.inputs.email.value,
-            password: formState.inputs.password.value,
-          }),
-          {
-            "Content-Type": "application/json",
-          }
-        );
-        // sending the user id the the auth login so will be able to use it as a creator id in new product
-        auth.login(responseData.user.id);
-      } catch (err) {}
+      onLogin(formState.inputs.email.value, formState.inputs.password.value);
     } else {
-      try {
-        const responseData = await sendRequest(
-          "http://localhost:5000/api/users/signup",
-          "POST",
-          JSON.stringify({
-            firstName: formState.inputs.firstName.value,
-            lastName: formState.inputs.lastName.value,
-            email: formState.inputs.email.value,
-            password: formState.inputs.password.value,
-          }),
-          {
-            "Content-Type": "application/json",
-          }
-        );
-
-        auth.login(responseData.user.id); // login after everything
-      } catch (err) {}
+      onAuth(
+        formState.inputs.firstName.value,
+        formState.inputs.lastName.value,
+        formState.inputs.email.value,
+        formState.inputs.password.value
+      );
     }
   };
 
+  useEffect(() => {
+    if (loading) {
+      setIsLoading(true);
+    } else {
+      setIsLoading(false);
+    }
+    if (error) {
+      setErrorMessage(error.error);
+    }
+  }, [loading, error]);
+
+  const clearError = () => {
+    setErrorMessage(null);
+  };
+
+  if (moveToTop.current) {
+    window.scrollTo({
+      behavior: "smooth",
+      top: 0,
+    });
+  }
+
   return (
     <>
-      <ErrorModal error={error} onClear={clearError} />
+      <ErrorModal error={errorMessage} onClear={clearError} />
       <div className="auth__box">
         <Card className="authentication">
           {isLoading && <LoadingSpinner asOverlay />}
           <h2>Login Required</h2>
           <hr />
-          <form onSubmit={authSubmitHandler}>
+          <form onSubmit={authSubmitHandler} ref={moveToTop}>
             {!isLoginMode && (
               <>
                 <Input
@@ -170,4 +168,20 @@ const Auth = () => {
   );
 };
 
-export default Auth;
+const mapStateToProps = (state) => {
+  return {
+    loading: state.auth.loading,
+    error: state.auth.error,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onAuth: (firstName, lastName, email, password) =>
+      dispatch(actionTypes.Auth(firstName, lastName, email, password)),
+    onLogin: (email, password) =>
+      dispatch(actionTypes.LoginAuth(email, password)),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Auth);

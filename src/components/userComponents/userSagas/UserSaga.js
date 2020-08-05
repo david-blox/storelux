@@ -1,0 +1,74 @@
+import { takeLatest, call, fork, put } from "redux-saga/effects";
+import * as api from "../../api/usersApi";
+import * as actions from "../usersActions/UserActions";
+
+function* getUsers() {
+  try {
+    const resultUsers = yield call(api.getUsers);
+    yield put(
+      actions.getUsersSuccess({
+        items: resultUsers.data.users,
+      })
+    );
+    console.log(resultUsers);
+  } catch (e) {
+    yield put(
+      actions.userError({
+        error: "An error happend when trying to get Users",
+      })
+    );
+  }
+}
+
+function* watchGetUsersRequest() {
+  yield takeLatest(actions.Types.GET_USERS_REQUEST, getUsers); //takeEvery it works like while(true)
+}
+
+function* getUserData(action) {
+  try {
+    const userData = yield call(api.getUserData, {
+      userId: action.userId,
+    });
+    // console.log(userData.data.user);
+    yield put(actions.getUserDataSuccess(userData.data.user));
+  } catch (e) {
+    yield put(
+      actions.userDataFailure({
+        error: "An error happend when tring to get user data",
+      })
+    );
+  }
+}
+
+function* watchGetUserDataRequest() {
+  yield takeLatest(actions.Types.USER_PROFILE_REQUEST, getUserData);
+}
+
+function* updateUser(action) {
+  try {
+    const userUpdate = yield call(api.updateUserData, {
+      userId: action.userId,
+      formData: action.formData,
+    });
+    yield put(actions.userUpdateSuccess(userUpdate.data.user));
+    console.log(userUpdate.data.user);
+  } catch (e) {
+    yield put(
+      actions.userUpdateFailure({
+        error: "an error happend when tring to update user data.",
+      })
+    );
+  }
+}
+
+function* watchUpdateUserRequest() {
+  yield takeLatest(actions.Types.USER_UPDATE_REQUEST, updateUser);
+}
+
+const userSagas = [
+  fork(watchGetUsersRequest),
+  fork(watchGetUserDataRequest),
+  fork(watchUpdateUserRequest),
+];
+
+export default userSagas;
