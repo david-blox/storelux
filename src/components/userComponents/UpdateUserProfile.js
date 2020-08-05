@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
+import { connect } from "react-redux";
 
 import Card from "../common/UIElements/Card";
 import Button from "../common/FormElements/Button";
@@ -14,85 +15,98 @@ import {
   VALIDATOR_MINLENGTH,
 } from "../common/util/InputValidators";
 import { useForm } from "../hooks/form-hook";
-import { useHttpClient } from "../hooks/http-hook";
+import * as actionTypes from "./usersActions/UserActions";
+// import { checkUserState } from "../store/rootReducers";
 import "./usersCss/UserForm.css";
 
-const UpdateUserProfile = () => {
-  const { isLoading, error, sendRequest, clearError } = useHttpClient();
-  const [loadedUser, setLoadedUser] = useState();
-
-  const userId = useParams().userId;
-  const history = useHistory();
-
+const UpdateUserProfile = ({
+  user,
+  userId,
+  onUpdate,
+  loading,
+  error,
+  userState,
+}) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [ErrorMessage, setErrorMessage] = useState(null);
   const [formState, inputHandler, setFormData] = useForm();
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const responseData = await sendRequest(
-          `http://localhost:5000/api/users/${userId}`
-        );
-        setLoadedUser(responseData.user);
-        setFormData(
-          {
-            firstName: {
-              value: responseData.user.firstName,
-              isValid: true,
-            },
-            lastName: {
-              value: responseData.user.lastName,
-              isValid: true,
-            },
-            email: {
-              value: responseData.user.email,
-              isValid: true,
-            },
-            address: {
-              value: responseData.user.address,
-              isValid: true,
-            },
-            phone: {
-              value: responseData.user.phone,
-              isValid: true,
-            },
-            image: {
-              value: responseData.user.image,
-              isValid: true,
-            },
-          },
-          true
-        );
-      } catch (err) {}
-    };
+  const history = useHistory();
 
-    fetchUser();
-  }, [setFormData, userId, sendRequest]);
+  useEffect(() => {
+    setFormData(
+      {
+        firstName: {
+          value: user.firstName,
+          isValid: true,
+        },
+        lastName: {
+          value: user.lastName,
+          isValid: true,
+        },
+        email: {
+          value: user.email,
+          isValid: true,
+        },
+        address: {
+          value: user.address,
+          isValid: true,
+        },
+        phone: {
+          value: user.phone,
+          isValid: true,
+        },
+        image: {
+          value: user.image,
+          isValid: true,
+        },
+      },
+      true
+    );
+    if (loading) {
+      setIsLoading(true);
+    } else {
+      setIsLoading(false);
+    }
+    if (error) {
+      setErrorMessage(error.error);
+    }
+  }, [
+    error,
+    loading,
+    setFormData,
+    user.address,
+    user.email,
+    user.firstName,
+    user.image,
+    user.lastName,
+    user.phone,
+  ]);
 
   const updateUserSubmitHandler = async (event) => {
     event.preventDefault();
-
     console.log(formState.inputs);
-    try {
-      const formData = new FormData();
-      formData.append("email", formState.inputs.email.value);
-      formData.append("firstName", formState.inputs.firstName.value);
-      formData.append("lastName", formState.inputs.lastName.value);
-      formData.append("address", formState.inputs.address.value);
-      formData.append("phone", formState.inputs.phone.value);
-      formData.append("image", formState.inputs.image.value);
+    const formData = new FormData();
+    formData.append("email", formState.inputs.email.value);
+    formData.append("firstName", formState.inputs.firstName.value);
+    formData.append("lastName", formState.inputs.lastName.value);
+    formData.append("address", formState.inputs.address.value);
+    formData.append("phone", formState.inputs.phone.value);
+    formData.append("image", formState.inputs.image.value);
 
-      await sendRequest(
-        `http://localhost:5000/api/users/${userId}`,
-        "PATCH",
-        formData
-      );
+    onUpdate(userId, formData);
+    if (!loading) {
       history.push(`/user/profile`);
-    } catch (err) {}
+    }
+  };
+
+  const clearError = () => {
+    setErrorMessage(null);
   };
 
   return (
     <>
-      <ErrorModal error={error} onClear={clearError} />
+      <ErrorModal error={ErrorMessage} onClear={clearError} />
       <div className="user-profile__wrapper">
         <UserManagment />
         {isLoading && (
@@ -100,7 +114,7 @@ const UpdateUserProfile = () => {
             <LoadingSpinner />
           </div>
         )}
-        {!isLoading && loadedUser && (
+        {!isLoading && (
           <Card className="update-user__form">
             <form onSubmit={updateUserSubmitHandler}>
               <div className="info">
@@ -110,7 +124,7 @@ const UpdateUserProfile = () => {
                       center
                       id="image"
                       onInput={inputHandler}
-                      initialValue={loadedUser.image}
+                      initialValue={user.image}
                       initialValid={true}
                     />
                   </div>
@@ -122,7 +136,7 @@ const UpdateUserProfile = () => {
                       validators={[VALIDATOR_EMAIL()]}
                       errorText="Please enter a valid email address."
                       onInput={inputHandler}
-                      initialValue={loadedUser.email}
+                      initialValue={user.email}
                       initialValid={true}
                     />
                   </div>
@@ -143,7 +157,7 @@ const UpdateUserProfile = () => {
                         validators={[VALIDATOR_REQUIRE()]}
                         onInput={inputHandler}
                         errorText="Please enter a valid First Name"
-                        initialValue={loadedUser.firstName}
+                        initialValue={user.firstName}
                         initialValid={true}
                       />
                       <Input
@@ -153,7 +167,7 @@ const UpdateUserProfile = () => {
                         validators={[VALIDATOR_REQUIRE()]}
                         onInput={inputHandler}
                         errorText="Please enter a valid Last Name"
-                        initialValue={loadedUser.lastName}
+                        initialValue={user.lastName}
                         initialValid={true}
                       />
                       <Input
@@ -163,7 +177,7 @@ const UpdateUserProfile = () => {
                         validators={[VALIDATOR_REQUIRE()]}
                         onInput={inputHandler}
                         errorText="Please enter a valid Address"
-                        initialValue={loadedUser.address}
+                        initialValue={user.address}
                         initialValid={true}
                       />
                       <Input
@@ -173,7 +187,7 @@ const UpdateUserProfile = () => {
                         validators={[VALIDATOR_MINLENGTH(10)]}
                         onInput={inputHandler}
                         errorText="Please enter a valid phone Numer"
-                        initialValue={loadedUser.phone}
+                        initialValue={user.phone}
                         initialValid={true}
                       />
                     </div>
@@ -192,5 +206,22 @@ const UpdateUserProfile = () => {
     </>
   );
 };
+const mapStateToProps = (state) => {
+  return {
+    userId: state.auth.userId,
+    user: state.user.item,
+    isDone: state.user.isDone,
+    loading: state.user.loading,
+    error: state.user.error,
+    // userState: checkUserState(state.user, state.user.isDone),
+  };
+};
 
-export default UpdateUserProfile;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onUpdate: (userId, formData) =>
+      dispatch(actionTypes.userUpdateRequest(userId, formData)),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(UpdateUserProfile);

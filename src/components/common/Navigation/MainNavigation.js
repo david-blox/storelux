@@ -1,15 +1,15 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { connect } from "react-redux";
 
 import MainHeader from "./MainHeader";
 import NavLinks from "./NavLinks";
 import SideDrawer from "./SideDrawer";
 import Backdrop from "../UIElements/Backdrop";
-import { AuthContext } from "../context/auth-context";
 import "./MainNavigation.css";
+import cartImage from "../../../images/cartImage.png";
 
-const MainNavigation = (props) => {
-  const auth = useContext(AuthContext);
+const MainNavigation = ({ isAuthenticated, userId }) => {
   const [drawerIsOpen, setDrawerIsOpen] = useState(false);
 
   const openDrawerHandler = () => {
@@ -36,9 +36,16 @@ const MainNavigation = (props) => {
           <span />
           <span />
         </button>
-        <h1 className="main-navigation__title">
-          <Link to={`/${auth.userId}/products`}>YourProducts</Link>
-        </h1>
+        <div className="main-navigation__content">
+          <h1 className="main-navigation__title">
+            <Link to={`/${userId}/products`}>YourProducts</Link>
+          </h1>
+          <Link to={`/${userId}/shoppingCart`}>
+            <div className="image-cart__content">
+              <img src={cartImage} alt="cart" />
+            </div>
+          </Link>
+        </div>
         <nav className="main-navigation__header-nav">
           <NavLinks />
         </nav>
@@ -47,4 +54,11 @@ const MainNavigation = (props) => {
   );
 };
 
-export default MainNavigation;
+const mapStateToProps = (state) => {
+  return {
+    isAuthenticated: state.auth.token !== null,
+    userId: state.auth.userId,
+  };
+};
+
+export default connect(mapStateToProps)(MainNavigation);

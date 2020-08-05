@@ -9,7 +9,6 @@ const ImageUpload = (props) => {
   const [isValid, setIsValid] = useState(false);
 
   const filePickerRef = useRef();
-
   // manage the perview file
   useEffect(() => {
     if (!file) {
@@ -72,7 +71,7 @@ const ImageUpload = (props) => {
           ADD IMAGE
         </Button>
       </div>
-      {!isValid && <p>{props.errorText}</p>}
+      {!isValid && !props.initialValue && <p>{props.errorText}</p>}
     </div>
   );
 };

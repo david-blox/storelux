@@ -7,7 +7,7 @@ import "./productsCss/AllProductsList.css";
 
 const AllProductsList = (props) => {
   const users = props.users;
-  if (props.items.length === 0) {
+  if (props.products.length === 0) {
     return (
       <div className="product-list center">
         <Card>
@@ -33,7 +33,7 @@ const AllProductsList = (props) => {
             </tr>
           </thead>
           <tbody>
-            {props.items.map((product) => {
+            {props.products.map((product) => {
               return (
                 <AllProductsItem
                   key={product.id}

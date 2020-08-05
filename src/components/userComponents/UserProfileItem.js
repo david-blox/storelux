@@ -5,8 +5,6 @@ import Avatar from "../common/UIElements/Avatar";
 import Button from "../common/FormElements/Button";
 
 const UserProfileItem = ({ user }) => {
-  console.log(user);
-
   return (
     <Card className="user-profile__info">
       <div>

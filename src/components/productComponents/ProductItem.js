@@ -1,19 +1,19 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useEffect } from "react";
+import { connect } from "react-redux";
 
 import Card from "../common/UIElements/Card";
 import Button from "../common/FormElements/Button";
 import Modal from "../common/UIElements/Modal";
 import ErrorModal from "../common/UIElements/ErrorModal";
 import LoadingSpinner from "../common/UIElements/LoadingSpinner";
-import { AuthContext } from "../common/context/auth-context";
-import { useHttpClient } from "../hooks/http-hook";
+import * as actionTypes from "./productsActions";
 import "./productsCss/ProductItem.css";
 
 const ProductItem = (props) => {
-  const { isLoading, sendRequest, error, clearError } = useHttpClient();
-  const auth = useContext(AuthContext);
   const [showProduct, setShowProduct] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   const openProductHandler = () => setShowProduct(true);
 
@@ -29,21 +29,30 @@ const ProductItem = (props) => {
 
   const confirmDeleteHandler = async () => {
     setShowConfirmModal(false);
-    try {
-      await sendRequest(
-        `http://localhost:5000/api/products/${props.id}`,
-        "DELETE"
-      );
-      console.log(props.id);
+    setIsLoading(true);
 
-      // sending the requested product id in order to filter the new products array
-      //and display the products without the deleted product
-      props.onDelete(props.id);
-    } catch (err) {}
+    props.onDeleteProduct(props.token, props.id, props.userId);
   };
+
+  useEffect(() => {
+    if (props.loading) {
+      setIsLoading(true);
+      // props.onDelete(props.id);
+    } else {
+      setIsLoading(false);
+    }
+    if (props.error) {
+      setErrorMessage(props.error.error);
+    }
+  }, [props]);
+
+  const clearError = () => {
+    setErrorMessage(null);
+  };
+
   return (
     <>
-      <ErrorModal error={error} onClear={clearError} />
+      <ErrorModal error={errorMessage} onClear={clearError} />
       <Modal
         show={showProduct}
         onCancel={closeProductHandler}
@@ -107,10 +116,10 @@ const ProductItem = (props) => {
             <Button inverse onClick={openProductHandler}>
               VIEW PRODUCT
             </Button>
-            {auth.userId === props.creatorId && (
+            {props.userId === props.creatorId && (
               <Button to={`/product/${props.id}`}>EDIT</Button>
             )}
-            {auth.userId === props.creatorId && (
+            {props.userId === props.creatorId && (
               <Button danger onClick={showDeleteHandler}>
                 DELETE
               </Button>
@@ -121,5 +130,20 @@ const ProductItem = (props) => {
     </>
   );
 };
+const mapStateToProps = (state) => {
+  return {
+    userId: state.auth.userId,
+    token: state.auth.token,
+    loading: state.userProducts.loading,
+    error: state.userProducts.error,
+  };
+};
 
-export default ProductItem;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onDeleteProduct: (token, productId, userId) =>
+      dispatch(actionTypes.deleteProductRequest(token, productId, userId)),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(ProductItem);

@@ -1,5 +1,6 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
+import { connect } from "react-redux";
 
 import Input from "../common/FormElements/Input";
 import Button from "../common/FormElements/Button";
@@ -13,14 +14,26 @@ import {
   VALIDATOR_SELECT,
 } from "../common/util/InputValidators";
 import { useForm } from "../hooks/form-hook";
-import { useHttpClient } from "../hooks/http-hook";
-import { AuthContext } from "../common/context/auth-context";
+import * as categoriesAction from "../categoriesComponents/categoriesActions";
+import * as productsAction from "../productComponents/productsActions";
 import "./productsCss/ProductForm.css";
 
-const NewProduct = () => {
-  const auth = useContext(AuthContext);
-  const [loadedCategories, setLoadedCategories] = useState();
-  const { isLoading, error, sendRequest, clearError } = useHttpClient();
+const NewProduct = ({
+  loadCategories,
+  categories,
+  loading,
+  isDone,
+  onCreate,
+  categoryError,
+  token,
+  userId,
+  newProductError,
+  productLoading,
+  canRedirect,
+}) => {
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const history = useHistory();
   const [formState, inputHandler] = useForm(
     {
       title: {
@@ -51,43 +64,64 @@ const NewProduct = () => {
     false
   );
 
-  const history = useHistory();
-
   useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const resposeData = await sendRequest(
-          "http://localhost:5000/api/categories"
-        );
+    if (!isDone) {
+      loadCategories();
+    }
+    if (loading || productLoading) {
+      setIsLoading(true);
+    } else {
+      setIsLoading(false);
+    }
+    if (categoryError) {
+      setErrorMessage(categoryError);
+    }
+    if (newProductError) {
+      debugger;
+      setErrorMessage(newProductError);
+    }
+    if (canRedirect) {
+      history.push(`/${userId}/products`);
+    }
+  }, [
+    loadCategories,
+    loading,
+    isDone,
+    categoryError,
+    newProductError,
+    productLoading,
+    canRedirect,
+    history,
+    userId,
+  ]);
 
-        setLoadedCategories(resposeData.categories);
-      } catch (err) {}
-    };
-    fetchCategories();
-  }, [sendRequest]);
-
-  const productSubmitHandler = async (event) => {
+  const productSubmitHandler = (event) => {
     event.preventDefault();
-    try {
-      const formData = new FormData();
-      formData.append("title", formState.inputs.title.value);
-      formData.append("category", formState.inputs.category.value);
-      formData.append("price", formState.inputs.price.value);
-      formData.append("units", formState.inputs.units.value);
-      formData.append("description", formState.inputs.description.value);
-      formData.append("creator", auth.userId);
-      formData.append("image", formState.inputs.image.value);
-      await sendRequest("http://localhost:5000/api/products", "POST", formData);
-      history.push("/");
-    } catch (err) {}
+
+    const formData = new FormData();
+    formData.append("title", formState.inputs.title.value);
+    formData.append("category", formState.inputs.category.value);
+    formData.append("price", formState.inputs.price.value);
+    formData.append("units", formState.inputs.units.value);
+    formData.append("description", formState.inputs.description.value);
+    formData.append("image", formState.inputs.image.value);
+
+    onCreate(token, formData);
   };
 
+  const clearError = () => {
+    setErrorMessage(null);
+  };
   return (
     <>
-      <ErrorModal error={error} onClear={clearError} />
-      {!isLoading && loadedCategories && (
+      <ErrorModal error={errorMessage} onClear={clearError} />
+      {isLoading && (
+        <div className="center">
+          <LoadingSpinner />
+        </div>
+      )}
+      {!isLoading && categories && (
         <form className="product-form" onSubmit={productSubmitHandler}>
-          {isLoading && <LoadingSpinner asOverlay />}
           <h2>Add New Product</h2>
           <Input
             id="title"
@@ -104,7 +138,7 @@ const NewProduct = () => {
             label="Category"
             type="select"
             value="Select Category"
-            options={loadedCategories.map((category) => ({
+            options={categories.map((category) => ({
               name: category.name,
               id: category.id,
             }))}
@@ -156,5 +190,25 @@ const NewProduct = () => {
     </>
   );
 };
+const mapStateToProps = (state) => {
+  return {
+    userId: state.auth.userId,
+    token: state.auth.token,
+    loading: state.categories.loading,
+    productLoading: state.newProduct.loading,
+    categories: state.categories.items,
+    isDone: state.categories.isDone,
+    categoryError: state.categories.error,
+    newProductError: state.newProduct.error,
+    canRedirect: state.newProduct.canRedirect,
+  };
+};
+const mapDispatchToProps = (dispatch) => {
+  return {
+    loadCategories: () => dispatch(categoriesAction.getCategoriesRequest()),
+    onCreate: (token, formData) =>
+      dispatch(productsAction.createProductRequest(token, formData)),
+  };
+};
 
-export default NewProduct;
+export default connect(mapStateToProps, mapDispatchToProps)(NewProduct);

@@ -1,38 +1,61 @@
 import React, { useEffect, useState } from "react";
+import { connect } from "react-redux";
 
 import UsersList from "./UsersList";
 import ErrorModal from "../common/UIElements/ErrorModal";
 import LoadingSpinner from "../common/UIElements/LoadingSpinner";
-import { useHttpClient } from "../hooks/http-hook";
+import * as actionTypes from "./usersActions/UserActions";
+import { getUsersState } from "../store/rootReducers";
 
-const Users = () => {
-  const { isLoading, error, sendRequest, clearError } = useHttpClient();
-  const [loadedUsers, setLoadedUsers] = useState();
+const Users = ({ loadUsers, loading, error, users, isDone, UsersState }) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const responseData = await sendRequest(
-          "http://localhost:5000/api/users"
-        );
+    if (!UsersState) {
+      loadUsers();
+    }
+    if (loading) {
+      setIsLoading(true);
+    } else {
+      setIsLoading(false);
+    }
+    if (error) {
+      setErrorMessage(error.error);
+    }
+  }, [loading, error, loadUsers, isDone, UsersState]);
 
-        setLoadedUsers(responseData.users);
-      } catch (err) {}
-    };
-    fetchUsers();
-  }, [sendRequest]);
+  const clearError = () => {
+    setErrorMessage(null);
+  };
 
   return (
     <>
-      <ErrorModal error={error} onClear={clearError} />
+      <ErrorModal error={errorMessage} onClear={clearError} />
       {isLoading && (
         <div className="center">
           <LoadingSpinner />
         </div>
       )}
-      {!isLoading && loadedUsers && <UsersList items={loadedUsers} />}
+      {!isLoading && <UsersList items={users} />}
     </>
   );
 };
 
-export default Users;
+const mapStateToProps = (state) => {
+  return {
+    users: state.users.items,
+    isDone: state.users.isDone,
+    loading: state.users.loading,
+    error: state.users.error,
+    UsersState: getUsersState(state, state.users.isDone),
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    loadUsers: () => dispatch(actionTypes.getUsersRequest()),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Users);

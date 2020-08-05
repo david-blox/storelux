@@ -21,6 +21,15 @@
   color: #0069d9;
   font-size: 1.5rem;
 }
+.main-navigation__content {
+  display: flex;
+  align-items: center;
+}
+
+.image-cart__content img {
+  width: 2rem;
+  margin: 0.4rem 0 0 1rem;
+}
 
 .main-navigation__title a {
   text-decoration: none;

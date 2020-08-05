@@ -12,6 +12,7 @@ import Button from "../common/FormElements/Button";
 import Card from "../common/UIElements/Card";
 import ErrorModal from "../common/UIElements/ErrorModal";
 import LoadingSpinner from "../common/UIElements/LoadingSpinner";
+import ImageUpload from "../common/FormElements/ImageUpload";
 import { useForm } from "../hooks/form-hook";
 import { useHttpClient } from "../hooks/http-hook";
 import { AuthContext } from "../common/context/auth-context";
@@ -22,12 +23,11 @@ const UpdateProduct = () => {
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const [loadedProduct, setLoadedProduct] = useState();
   const [loadedCategories, setLoadedCategories] = useState();
-  console.log(loadedProduct);
-  console.log(loadedCategories);
 
   const productId = useParams().productId;
   const history = useHistory();
 
+  console.log(loadedProduct);
   const [formState, inputHandler, setFormData] = useForm(
     {
       title: {
@@ -58,11 +58,17 @@ const UpdateProduct = () => {
 
   useEffect(() => {
     const fetchCategories = async () => {
-      const responseDataCategories = await sendRequest(
-        "http://localhost:5000/api/categories"
-      );
-      setLoadedCategories(responseDataCategories.categories);
+      try {
+        const responseDataCategories = await sendRequest(
+          "http://localhost:5000/api/categories"
+        );
+        setLoadedCategories(responseDataCategories.categories);
+      } catch (err) {}
     };
+    fetchCategories();
+  }, [sendRequest]);
+
+  useEffect(() => {
     const fetchProduct = async () => {
       try {
         const responseData = await sendRequest(
@@ -91,6 +97,10 @@ const UpdateProduct = () => {
               value: responseData.product.description,
               isValid: true,
             },
+            image: {
+              value: responseData.product.image,
+              isValid: true,
+            },
           },
           true
         );
@@ -103,24 +113,24 @@ const UpdateProduct = () => {
       } catch (err) {}
     };
     fetchProduct();
-    fetchCategories();
   }, [sendRequest, productId, setFormData]);
 
   const updateSubmitHandler = async (event) => {
     event.preventDefault();
     try {
+      const formData = new FormData();
+      formData.append("title", formState.inputs.title.value);
+      formData.append("category", formState.inputs.category.value);
+      formData.append("price", formState.inputs.price.value);
+      formData.append("units", formState.inputs.units.value);
+      formData.append("description", formState.inputs.description.value);
+      formData.append("image", formState.inputs.image.value);
       await sendRequest(
         `http://localhost:5000/api/products/${productId}`,
         "PATCH",
-        JSON.stringify({
-          title: formState.inputs.title.value,
-          category: formState.inputs.category.value,
-          price: formState.inputs.price.value,
-          units: formState.inputs.units.value,
-          description: formState.inputs.description.value,
-        }),
+        formData,
         {
-          "Content-Type": "application/json",
+          Authorization: "Bearer " + auth.token,
         }
       );
       history.push(`/${auth.userId}/products`);
@@ -210,7 +220,18 @@ const UpdateProduct = () => {
             initialValue={loadedProduct.description}
             initialValid={true}
           />
-          <Button type="submit" disabled={!formState.isValid}>
+          <ImageUpload
+            id="image"
+            classImage="imagePreview"
+            onInput={inputHandler}
+            initialValue={loadedProduct.image}
+            initialValid={true}
+          />
+          <Button
+            type="submit"
+            buttonClass="btnProductSubmit"
+            disabled={!formState.isValid}
+          >
             UPDATE PRODUCT
           </Button>
         </form>

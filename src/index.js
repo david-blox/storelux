@@ -3,15 +3,16 @@ import ReactDOM from "react-dom";
 import { Provider as ReduxProvider } from "react-redux";
 import { BrowserRouter as Router } from "react-router-dom";
 import { createStore, applyMiddleware } from "redux";
-import axios from "axios";
-import { composeWithDevTools } from "redux-devtools-extension";
 import createSagaMiddleware from "redux-saga";
+
+import axios from "axios";
+// import reducer from "./components/shoppingCartComponents/ShoppingCartReducer";
+import { composeWithDevTools } from "redux-devtools-extension";
 
 import App from "./components/App";
 import * as serviceWorker from "./serviceWorker";
-import reducers from "./redux/rootReducers";
-import rootSaga from "./redux/rootSaga";
-// import "bootstrap/dist/css/bootstrap.min.css";
+import reducers from "./components/store/rootReducers";
+import rootSaga from "./components/store/rootSaga";
 import "./index.css";
 
 axios.defaults.withCredentials = true;
@@ -24,6 +25,7 @@ const store = createStore(
   composeWithDevTools(applyMiddleware(sagaMiddleware))
 );
 sagaMiddleware.run(rootSaga);
+// const store = createStore(reducer);
 
 ReactDOM.render(
   <React.StrictMode>

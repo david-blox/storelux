@@ -1,11 +1,10 @@
-import React, { useContext } from "react";
+import React from "react";
 import { NavLink } from "react-router-dom";
+import { connect } from "react-redux";
 
-import { AuthContext } from "../context/auth-context";
 import "./NavLinks.css";
 
-const NavLinks = (props) => {
-  const auth = useContext(AuthContext);
+const NavLinks = ({ isAuthenticated, userId }) => {
 
   return (
     <ul className="nav-links">
@@ -19,15 +18,15 @@ const NavLinks = (props) => {
           ALL USERS
         </NavLink>
       </li>
-      {auth.isLoggedIn && (
+      {isAuthenticated && (
         <li>
-          <NavLink to={`/${auth.userId}/products`}>MY PRODUCTS</NavLink>
+          <NavLink to={`/${userId}/products`}>MY PRODUCTS</NavLink>
         </li>
       )}
       <li>
         <NavLink to="/products">ALL PRODUCTS</NavLink>
       </li>
-      {auth.isLoggedIn && (
+      {isAuthenticated && (
         <li>
           <NavLink to="/product/new">ADD PRODUCT</NavLink>
         </li>
@@ -35,23 +34,30 @@ const NavLinks = (props) => {
       <li>
         <NavLink to="/about">ABOUT US</NavLink>
       </li>
-      {auth.isLoggedIn && (
+      {isAuthenticated && (
         <li>
           <NavLink to="/user/profile">PROFILE</NavLink>
         </li>
       )}
-      {!auth.isLoggedIn && (
+      {!isAuthenticated && (
         <li>
           <NavLink to="/auth">LOGIN</NavLink>
         </li>
       )}
-      {auth.isLoggedIn && (
+      {isAuthenticated && (
         <li>
-          <button onClick={auth.logout}>LOGOUT</button>
+          <NavLink to="/logout">LOGOUT</NavLink>
         </li>
       )}
     </ul>
   );
 };
 
-export default NavLinks;
+const mapStateToProps = (state) => {
+  return {
+    isAuthenticated: state.auth.token !== null,
+    userId: state.auth.userId,
+  };
+};
+
+export default connect(mapStateToProps)(NavLinks);

@@ -1,13 +1,13 @@
-import { takeLatest, take, call, put, fork } from "redux-saga/effects";
+import { takeLatest, call, put, fork, take } from "redux-saga/effects";
 import * as actions from "./productsActions";
-import * as api from "../../api/products";
+import * as api from "../api/productsApi";
 
 function* getProducts() {
   try {
     const result = yield call(api.getProducts);
     yield put(
       actions.getProductsSuccess({
-        items: result.data,
+        items: result.data.products,
       })
     );
     console.log(result);
@@ -26,19 +26,16 @@ function* watchGetProductsRequest() {
 
 function* createProduct(action) {
   try {
-    const product = yield call(api.createProduct, {
-      name: action.payload.name,
-      userId: action.payload.userId,
-      category: action.payload.category,
-      price: action.payload.price,
-      units: action.payload.units,
+    const responseData = yield call(api.createProduct, {
+      token: action.token,
+      formData: action.formData,
     });
-    yield put(actions.createProductSuccess());
-    console.log(product);
+    yield put(actions.createProductSuccess(responseData.data.product));
+    console.log(responseData);
   } catch (e) {
     yield put(
-      actions.productError({
-        error: "An error happend when trying to create new product",
+      actions.createProductFailure({
+        error: "An error happend when tring to add new product",
       })
     );
   }
@@ -48,64 +45,40 @@ function* watchCreateProductRequest() {
   yield takeLatest(actions.Types.CREATE_PRODUCT_REQUEST, createProduct);
 }
 
-// need to fix here
-function* productsSuccess() {
+function* getUserProducts(action) {
   try {
-    yield call(getProducts);
-  } catch (e) {
-    yield put(
-      actions.productError({
-        error: "An error happend when trying to success create new product",
-      })
-    );
-  }
-}
-
-function* watchCreateProductSuccess() {
-  yield takeLatest(actions.Types.CREATE_PRODUCT_SUCCESS, productsSuccess);
-}
-
-function* updateProduct(action) {
-  // debugger;
-  try {
-    const product = yield call(api.updateProduct, {
-      id: action.payload._id,
-      name: action.payload.name,
-      userId: action.payload.userId,
-      category: action.payload.category,
-      price: action.payload.price,
-      units: action.payload.units,
+    const responseData = yield call(api.getUserProducts, {
+      userId: action.userId,
     });
-    const updatedData = yield call(api.getProducts);
     yield put(
-      actions.updateProductSuccess({
-        items: updatedData.data,
+      actions.getUserProductsSuccess({
+        items: responseData.data.products,
       })
     );
-    // debugger;
-    console.log(product);
+    console.log(responseData);
   } catch (e) {
     yield put(
-      actions.productError({
-        error: "An error happend when trying to update product",
+      actions.getUserProductsFailure({
+        error: "Could not get users products, Please try again.",
       })
     );
   }
 }
 
-function* watchUpdateProductRequest() {
-  yield takeLatest(actions.Types.UPDATE_PRODUCT_REQUEST, updateProduct);
+function* watchGetUserProductsRequest() {
+  yield takeLatest(actions.Types.GET_USER_PRODUCTS_REQUEST, getUserProducts);
 }
 
-function* deleteProduct({ productId }) {
+function* deleteProductRequest({ token, productId, userId }) {
   try {
-    yield call(api.deleteProduct, productId);
+    yield call(api.deleteProduct, token, productId);
     yield put(actions.deleteProductSuccess());
-    yield call(getProducts);
+
+    yield call(getUserProducts, { userId });
   } catch (e) {
     yield put(
-      actions.productError({
-        error: "An error happend when trying to delete product",
+      actions.deleteProductFailure({
+        error: "Could not Delete products, Please try again.",
       })
     );
   }
@@ -114,8 +87,10 @@ function* deleteProduct({ productId }) {
 function* watchDeleteProductRequest() {
   while (true) {
     const deleteAction = yield take(actions.Types.DELETE_PRODUCT_REQUEST);
-    yield call(deleteProduct, {
-      productId: deleteAction.payload.productId,
+    yield call(deleteProductRequest, {
+      token: deleteAction.token,
+      productId: deleteAction.productId,
+      userId: deleteAction.userId,
     });
   }
 }
@@ -123,8 +98,7 @@ function* watchDeleteProductRequest() {
 const productsSagas = [
   fork(watchGetProductsRequest),
   fork(watchCreateProductRequest),
-  fork(watchCreateProductSuccess),
-  fork(watchUpdateProductRequest),
+  fork(watchGetUserProductsRequest),
   fork(watchDeleteProductRequest),
 ];
 

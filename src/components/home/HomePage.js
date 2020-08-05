@@ -1,11 +1,10 @@
-import React, { useContext } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
+import { connect } from "react-redux";
 
-import { AuthContext } from "../common/context/auth-context";
 import "./HomePage.css";
 
-const HomePage = () => {
-  const auth = useContext(AuthContext);
+const HomePage = ({ isAuthenticated }) => {
 
   return (
     <>
@@ -20,7 +19,7 @@ const HomePage = () => {
             <Link style={{ textDecoration: "none", color: "#fff" }} to="about">
               <button className="btn">ABOUT US</button>
             </Link>
-            {!auth.isLoggedIn && (
+            {!isAuthenticated && (
               <Link
                 to="/auth"
                 style={{ textDecoration: "none", color: "#fff" }}
@@ -38,4 +37,10 @@ const HomePage = () => {
   );
 };
 
-export default HomePage;
+const mapStateToProps = (state) => {
+  return {
+    isAuthenticated: state.auth.token !== null,
+  };
+};
+
+export default connect(mapStateToProps)(HomePage);
