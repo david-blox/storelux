@@ -52,6 +52,7 @@ const Input = (props) => {
   const element =
     props.element === "input" ? (
       <input
+        key={props.id}
         id={props.id}
         type={props.type}
         placeholder={props.placeholder}
@@ -62,7 +63,12 @@ const Input = (props) => {
     ) : (
       [
         props.element === "select" ? (
-          <select id={props.id} onBlur={touchHandler} onChange={changeHandler}>
+          <select
+            key={props.id}
+            id={props.id}
+            onBlur={touchHandler}
+            onChange={changeHandler}
+          >
             <option>{props.value}</option>
             {props.options.map((option) => (
               <option key={option.id} value={option.name}>
@@ -72,6 +78,7 @@ const Input = (props) => {
           </select>
         ) : (
           <textarea
+            key={props.id}
             id={props.id}
             rows={props.rows || 4}
             onChange={changeHandler}
