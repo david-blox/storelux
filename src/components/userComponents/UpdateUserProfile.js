@@ -16,7 +16,6 @@ import {
 } from "../common/util/InputValidators";
 import { useForm } from "../hooks/form-hook";
 import * as actionTypes from "./usersActions/UserActions";
-// import { checkUserState } from "../store/rootReducers";
 import "./usersCss/UserForm.css";
 
 const UpdateUserProfile = ({

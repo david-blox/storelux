@@ -1,4 +1,5 @@
 import { Types } from "../usersActions/UserActions";
+import { Types as productActions } from "../../productComponents/productsActions/productsActions";
 import { updateObject } from "../../store/utility";
 
 const initialState = {
@@ -29,6 +30,12 @@ const getUsersFailure = (state, action) => {
   });
 };
 
+const onCreateOrDeleteProductSuccess = (state, action) => {
+  return updateObject(state, {
+    isDone: false,
+  });
+};
+
 export default function usersReducer(state = initialState, action) {
   switch (action.type) {
     case Types.GET_USERS_REQUEST:
@@ -37,6 +44,10 @@ export default function usersReducer(state = initialState, action) {
       return requestUsersSuccess(state, action);
     case Types.GET_USERS_FAILURE:
       return getUsersFailure(state, action);
+    case productActions.CREATE_PRODUCT_SUCCESS:
+      return onCreateOrDeleteProductSuccess(state, action);
+    case productActions.DELETE_PRODUCT_SUCCESS:
+      return onCreateOrDeleteProductSuccess(state, action);
     default:
       return state;
   }

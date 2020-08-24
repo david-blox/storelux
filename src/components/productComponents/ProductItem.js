@@ -6,10 +6,11 @@ import Button from "../common/FormElements/Button";
 import Modal from "../common/UIElements/Modal";
 import ErrorModal from "../common/UIElements/ErrorModal";
 import LoadingSpinner from "../common/UIElements/LoadingSpinner";
-import * as actionTypes from "./productsActions";
+import * as actionTypes from "./productsActions/productsActions";
 import "./productsCss/ProductItem.css";
 
 const ProductItem = (props) => {
+  const { onDeleteProduct, token, userId, loading, error } = props;
   const [showProduct, setShowProduct] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -27,24 +28,24 @@ const ProductItem = (props) => {
     setShowConfirmModal(false);
   };
 
-  const confirmDeleteHandler = async () => {
+  const confirmDeleteHandler = () => {
     setShowConfirmModal(false);
     setIsLoading(true);
 
-    props.onDeleteProduct(props.token, props.id, props.userId);
+    onDeleteProduct(token, props.id, userId);
   };
 
   useEffect(() => {
-    if (props.loading) {
+    if (loading) {
       setIsLoading(true);
       // props.onDelete(props.id);
     } else {
       setIsLoading(false);
     }
-    if (props.error) {
-      setErrorMessage(props.error.error);
+    if (error) {
+      setErrorMessage(error.error);
     }
-  }, [props]);
+  }, [error, loading]);
 
   const clearError = () => {
     setErrorMessage(null);

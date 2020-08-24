@@ -6,13 +6,22 @@ import ErrorModal from "../common/UIElements/ErrorModal";
 import LoadingSpinner from "../common/UIElements/LoadingSpinner";
 import * as actionTypes from "./usersActions/UserActions";
 import { getUsersState } from "../store/rootReducers";
+import { getUserProductsChange } from "../store/rootReducers";
 
-const Users = ({ loadUsers, loading, error, users, isDone, UsersState }) => {
+const Users = ({
+  loadUsers,
+  loading,
+  error,
+  users,
+  UsersState,
+  userProductsChange,
+}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
+  console.log(userProductsChange);
 
   useEffect(() => {
-    if (!UsersState) {
+    if (!UsersState || userProductsChange) {
       loadUsers();
     }
     if (loading) {
@@ -23,7 +32,11 @@ const Users = ({ loadUsers, loading, error, users, isDone, UsersState }) => {
     if (error) {
       setErrorMessage(error.error);
     }
-  }, [loading, error, loadUsers, isDone, UsersState]);
+    window.scrollTo({
+      behavior: "smooth",
+      top: 0,
+    });
+  }, [loading, error, loadUsers, UsersState, userProductsChange]);
 
   const clearError = () => {
     setErrorMessage(null);
@@ -45,10 +58,13 @@ const Users = ({ loadUsers, loading, error, users, isDone, UsersState }) => {
 const mapStateToProps = (state) => {
   return {
     users: state.users.items,
-    isDone: state.users.isDone,
     loading: state.users.loading,
     error: state.users.error,
     UsersState: getUsersState(state, state.users.isDone),
+    userProductsChange: getUserProductsChange(
+      state,
+      state.userProducts.hasChanged
+    ),
   };
 };
 

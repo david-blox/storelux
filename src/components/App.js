@@ -16,13 +16,10 @@ import UpdateUserProfile from "./userComponents/UpdateUserProfile";
 import ShoppingCart from "./shoppingCartComponents/ShoppingCart";
 import Logout from "./userComponents/Logout";
 import * as actions from "./userComponents/usersActions/authActions";
-// import PageNotFound from "./common/PageNoFound";
-// import { AuthContext } from "./common/context/auth-context";
-// import { useAuth } from "../components/hooks/auth.hook";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const App = ({ isAuthenticated, userId, onTryAutoSignup }) => {
-  // const { token, login, logout, userId } = useAuth();
-
   let routes;
   useEffect(() => {
     onTryAutoSignup();
@@ -30,21 +27,24 @@ const App = ({ isAuthenticated, userId, onTryAutoSignup }) => {
 
   if (isAuthenticated) {
     routes = (
-      <Switch>
-        <Route exact path="/" component={HomePage} />
-        <Route exact path="/users" component={Users} />
-        <Route exact path="/user/profile" component={UserProfile} />
-        <Route exact path="/user/:userId" component={UpdateUserProfile} />
-        <Route path="/products" component={AllProducts} />
-        <Route path="/:userId/shoppingCart" component={ShoppingCart} />
-        <Route exact path="/:userId/products" component={UserProducts} />
-        <Route exact path="/product/new" component={NewProduct} />
-        <Route path="/product/:productId" component={UpdateProduct} />
-        <Route path="/about" component={AboutPage} />
-        <Route path="/logout" component={Logout} />
-        <Redirect to="/" />
-        {/* <Route component={PageNotFound} /> */}
-      </Switch>
+      <>
+        <Switch>
+          <Route exact path="/" component={HomePage} />
+          <Route exact path="/users" component={Users} />
+          <Route exact path="/user/profile" component={UserProfile} />
+          <Route exact path="/user/:userId" component={UpdateUserProfile} />
+          <Route path="/products" component={AllProducts} />
+          <Route path="/:userId/shoppingCart" component={ShoppingCart} />
+          <Route exact path="/:userId/products" component={UserProducts} />
+          <Route exact path="/product/new" component={NewProduct} />
+          <Route path="/product/:productId" component={UpdateProduct} />
+          <Route path="/about" component={AboutPage} />
+          <Route path="/logout" component={Logout} />
+          <Redirect to="/" />
+          {/* <Route component={PageNotFound} /> */}
+        </Switch>
+        <ToastContainer autoClose={3000} hideProgressBar />
+      </>
     );
   } else {
     routes = (

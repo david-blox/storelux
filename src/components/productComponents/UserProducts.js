@@ -5,7 +5,7 @@ import { useParams } from "react-router-dom";
 import ProductList from "./ProductList";
 import ErrorModal from "../common/UIElements/ErrorModal";
 import LoadingSpinner from "../common/UIElements/LoadingSpinner";
-import * as productsAction from "./productsActions";
+import * as productsAction from "./productsActions/productsActions";
 
 const UserProducts = ({
   isDone,
@@ -47,12 +47,6 @@ const UserProducts = ({
     currentUserId,
   ]);
 
-  const productDeletedHandler = (deletedProductId) => {
-    setLoadedProducts((prevProducts) =>
-      prevProducts.filter((product) => product.id !== deletedProductId)
-    );
-  };
-
   const clearError = () => {
     setErrorMessage(null);
   };
@@ -64,12 +58,7 @@ const UserProducts = ({
           <LoadingSpinner />
         </div>
       )}
-      {!isLoading && loadedProducts && (
-        <ProductList
-          items={loadedProducts}
-          onDeleteProduct={productDeletedHandler}
-        />
-      )}
+      {!isLoading && loadedProducts && <ProductList items={loadedProducts} />}
     </>
   );
 };

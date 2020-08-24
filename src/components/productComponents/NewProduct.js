@@ -15,7 +15,7 @@ import {
 } from "../common/util/InputValidators";
 import { useForm } from "../hooks/form-hook";
 import * as categoriesAction from "../categoriesComponents/categoriesActions";
-import * as productsAction from "../productComponents/productsActions";
+import * as productsAction from "./productsActions/productsActions";
 import "./productsCss/ProductForm.css";
 
 const NewProduct = ({
@@ -138,10 +138,7 @@ const NewProduct = ({
             label="Category"
             type="select"
             value="Select Category"
-            options={categories.map((category) => ({
-              name: category.name,
-              id: category.id,
-            }))}
+            options={categories}
             validators={[VALIDATOR_SELECT("Select Category")]}
             errorText="Please enter a valid Category."
             onInput={inputHandler}

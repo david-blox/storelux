@@ -6,7 +6,6 @@ import { createStore, applyMiddleware } from "redux";
 import createSagaMiddleware from "redux-saga";
 
 import axios from "axios";
-// import reducer from "./components/shoppingCartComponents/ShoppingCartReducer";
 import { composeWithDevTools } from "redux-devtools-extension";
 
 import App from "./components/App";
@@ -25,7 +24,6 @@ const store = createStore(
   composeWithDevTools(applyMiddleware(sagaMiddleware))
 );
 sagaMiddleware.run(rootSaga);
-// const store = createStore(reducer);
 
 ReactDOM.render(
   <React.StrictMode>

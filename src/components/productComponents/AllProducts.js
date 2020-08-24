@@ -4,13 +4,15 @@ import { connect } from "react-redux";
 import AllProductsList from "./AllProductsList";
 import ErrorModal from "../common/UIElements/ErrorModal";
 import LoadingSpinner from "../common/UIElements/LoadingSpinner";
-import * as productsAction from "./productsActions";
+import * as productsAction from "./productsActions/productsActions";
 import * as usersAction from "../userComponents/usersActions/UserActions";
 
 const AllProducts = ({
   loadProducts,
   loadUsers,
   products,
+  productsDone,
+  usersDone,
   users,
   usersError,
   productsError,
@@ -21,9 +23,15 @@ const AllProducts = ({
   const [errorMessage, setErrorMessage] = useState();
 
   useEffect(() => {
-    loadUsers();
-    loadProducts();
-  }, [loadProducts, loadUsers]);
+    if (!usersDone && !productsDone) {
+      loadUsers();
+      loadProducts();
+    }
+    window.scrollTo({
+      behavior: "smooth",
+      top: 0,
+    });
+  }, [loadProducts, loadUsers, productsDone, usersDone]);
 
   useEffect(() => {
     if (loadingProducts || loadingUsers) {
@@ -58,6 +66,8 @@ const AllProducts = ({
 
 const mapStateToProps = (state) => {
   return {
+    usersDone: state.users.isDone,
+    productsDone: state.products.isDone,
     products: state.products.items,
     loadingProducts: state.products.loading,
     users: state.users.items,

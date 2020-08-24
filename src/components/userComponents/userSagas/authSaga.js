@@ -66,9 +66,9 @@ function* watchLoginUserReques() {
   yield takeLatest(actions.Types.USER_LOGIN_START, loginUser);
 }
 function* logoutUser(action) {
-  yield localStorage.removeItem("token");
-  yield localStorage.removeItem("userId");
-  yield localStorage.removeItem("expiresIn");
+  yield call([localStorage, "removeItem"], "token");
+  yield call([localStorage, "removeItem"], "userId");
+  yield call([localStorage, "removeItem"], "expiresIn");
   yield put(actions.logoutSucceed());
 }
 
