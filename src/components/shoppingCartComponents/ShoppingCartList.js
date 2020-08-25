@@ -9,7 +9,7 @@ import ErrorModal from "../common/UIElements/ErrorModal";
 import LoadingSpinner from "../common/UIElements/LoadingSpinner";
 // import * as actionTypes from "./ShoppingCartActions";
 
-const ShoppingCartList = ({ cartItems }) => {
+const ShoppingCartList = ({ cartItems, cartSummaryloading }) => {
   const [totalSum, setTotalSum] = useState(0);
   const [vat, setVat] = useState();
   const [totalPrice, setTotalPrice] = useState();
@@ -36,7 +36,12 @@ const ShoppingCartList = ({ cartItems }) => {
 
   useEffect(() => {
     calculateTotalprice(cartItems);
-  }, [cartItems]);
+    if (cartSummaryloading) {
+      setIsLoading(true);
+    } else {
+      setIsLoading(false);
+    }
+  }, [cartItems, cartSummaryloading]);
 
   // useEffect(() => {
   //   let sum = 0;
@@ -87,7 +92,7 @@ const ShoppingCartList = ({ cartItems }) => {
       </ul>
       <ErrorModal error={errorMessage} onClear={clearError} />
       {isLoading && (
-        <div className="loadingSpinerPosion">
+        <div className="loadingSpinerPosition">
           <LoadingSpinner />
         </div>
       )}
@@ -105,6 +110,7 @@ const ShoppingCartList = ({ cartItems }) => {
 const mapStateToProps = (state) => {
   return {
     cartItems: state.cart.items,
+    cartSummaryloading: state.cart.cartSummary.loading,
   };
 };
 const mapDispatchToProps = (dispatch) => {

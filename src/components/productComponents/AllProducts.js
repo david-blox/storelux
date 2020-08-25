@@ -18,6 +18,7 @@ const AllProducts = ({
   productsError,
   loadingProducts,
   loadingUsers,
+  addToCart,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState();
@@ -34,7 +35,7 @@ const AllProducts = ({
   }, [loadProducts, loadUsers, productsDone, usersDone]);
 
   useEffect(() => {
-    if (loadingProducts || loadingUsers) {
+    if (loadingProducts || loadingUsers || addToCart.loading) {
       setIsLoading(true);
     } else {
       setIsLoading(false);
@@ -45,7 +46,10 @@ const AllProducts = ({
     if (productsError) {
       setErrorMessage(productsError.error);
     }
-  }, [loadingProducts, loadingUsers, productsError, usersError]);
+    if (addToCart.error) {
+      setErrorMessage(addToCart.error);
+    }
+  }, [addToCart, loadingProducts, loadingUsers, productsError, usersError]);
 
   const clearError = () => {
     setErrorMessage(null);
@@ -74,6 +78,7 @@ const mapStateToProps = (state) => {
     loadingUsers: state.users.loading,
     usersError: state.users.error,
     productsError: state.products.error,
+    addToCart: state.addToCart,
   };
 };
 const mapDispatchToProps = (dispatch) => {

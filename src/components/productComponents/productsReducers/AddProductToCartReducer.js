@@ -6,7 +6,6 @@ const initialState = {
   error: null,
   loading: false,
   isDone: false,
-  success: false,
 };
 
 const addProductToCartStart = (state, action) => {
@@ -14,7 +13,6 @@ const addProductToCartStart = (state, action) => {
     error: null,
     loading: true,
     isDone: false,
-    success: false,
   });
 };
 
@@ -23,7 +21,6 @@ const addProductToCartSuccess = (state, action) => {
     item: action.payload.cart,
     error: null,
     loading: false,
-    success: true,
     isDone: true,
   });
 };
@@ -32,7 +29,6 @@ const addProductToCartFailure = (state, action) => {
   return updateObject(state, {
     error: action.payload.error,
     loading: false,
-    success: false,
     isDone: true,
   });
 };

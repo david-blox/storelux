@@ -3,37 +3,14 @@
 * {
   box-sizing: border-box;
 }
-/* 
-#root {
-  max-width: 1000px;
-  margin: 0 auto;
-} */
-body {
-  position: relative;
-  margin: 4rem 0 0 0;
-  height: 150vh;
-}
-
-body::after {
-  content: "";
-  position: absolute;
-  margin: 0 0 0 0;
-  background-image: url("./images/connection-4885313_1920.jpg");
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  background-position: center center;
-  background-size: cover;
-  width: 100%;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0.9;
-  z-index: -1;
-}
 
 html {
   font-family: "Open Sans", sans-serif;
+  background: url("./images/background.png") no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
 }
 
 .slide-in-left-enter {

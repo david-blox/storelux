@@ -36,10 +36,6 @@ const ShoppingCart = ({
     }
   }, [error, loading]);
 
-  // const onChangeQuantityHandler = (productInfoChanged) => {
-  //   console.log(productInfoChanged.cart);
-  // };
-
   const clearError = () => {
     setErrorNessage(null);
   };
@@ -56,7 +52,6 @@ const ShoppingCart = ({
         <div className="user-cart__wrapper">
           <ShoppingCartList
             items={cart}
-            // onChangeProduct={onChangeQuantityHandler}
           />
         </div>
       )}

@@ -62,11 +62,11 @@ const ShoppingCartItem = (props) => {
   }, [productId, props.quantity, quantity, token, updateProductInCart, userId]);
 
   useEffect(() => {
-    if (productLoading) {
-      setIsLoading(true);
-    } else {
-      setIsLoading(false);
-    }
+    // if (productLoading) {
+    //   setIsLoading(true);
+    // } else {
+    //   setIsLoading(false);
+    // }
     if (productError) {
       setErrorMessage(productError.error);
     }

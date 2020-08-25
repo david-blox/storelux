@@ -1,18 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { connect } from "react-redux";
 
 import Modal from "../common/UIElements/Modal";
 import Button from "../common/FormElements/Button";
 import Avatar from "../common/UIElements/Avatar";
 import ErrorModal from "../common/UIElements/ErrorModal";
-import LoadingSpinner from "../common/UIElements/LoadingSpinner";
 import * as actionTypes from "./productsActions/addToCartActions";
 import "./productsCss/AllProductsItem.css";
-import { toast } from "react-toastify";
 
 const AllProductsItem = (props) => {
   const [showProduct, setShowProduct] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [productId, setProductId] = useState();
@@ -23,15 +20,7 @@ const AllProductsItem = (props) => {
   const [description, setDescription] = useState();
   const [image, setImage] = useState();
 
-  const {
-    error,
-    loading,
-    success,
-    isDone,
-    onAddProductToCart,
-    userId,
-    token,
-  } = props;
+  const { onAddProductToCart, userId, token } = props;
 
   const openProductHandler = () => {
     setShowProduct(true);
@@ -61,27 +50,6 @@ const AllProductsItem = (props) => {
     }
   };
 
-  useEffect(() => {
-    if (error) {
-      setErrorMessage(error);
-    }
-    // if (loading) {
-    //   setIsLoading(true);
-    // } else {
-    //   setIsLoading(false);
-    // }
-  }, [error, loading]);
-
-  useEffect(() => {
-    if (success && isDone) {
-      toast.info("product added successfuly to cart.");
-    }
-  }, [success, isDone]);
-
-  // const confirmationMassage = () => {
-  //   toast.info("product added successfuly to cart.");
-  // };
-
   const addProductToCart = async (event) => {
     event.preventDefault();
     setShowProduct(false);
@@ -100,14 +68,6 @@ const AllProductsItem = (props) => {
   const clearError = () => {
     setErrorMessage(null);
   };
-
-  if (isLoading) {
-    return (
-      <div className="center">
-        <LoadingSpinner asOverlay />
-      </div>
-    );
-  }
 
   return (
     <>
@@ -182,10 +142,6 @@ const mapStateToProps = (state) => {
   return {
     userId: state.auth.userId,
     token: state.auth.token,
-    loading: state.addToCart.loading,
-    error: state.addToCart.error,
-    success: state.addToCart.success,
-    isDone: state.addToCart.isDone,
   };
 };
 const mapDispatchToProps = (dispatch) => {

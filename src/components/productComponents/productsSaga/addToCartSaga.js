@@ -1,10 +1,10 @@
 import { takeLatest, call, put, fork } from "redux-saga/effects";
 import * as actions from "../productsActions/addToCartActions";
 import * as api from "../../api/productsApi";
+import { toast } from "react-toastify";
 
 function* addProductToCartRequest(action) {
   try {
-    // yield put(actions.addToCartStart());
     const resposeData = yield call(api.addProductToCart, {
       token: action.payload.token,
       userId: action.payload.userId,
@@ -18,6 +18,8 @@ function* addProductToCartRequest(action) {
       image: action.payload.image,
     });
     yield put(actions.addToCartSuccess(resposeData.data));
+
+    yield toast.info("Product added successfuly to cart.");
     console.log(resposeData.data);
   } catch (e) {
     yield put(

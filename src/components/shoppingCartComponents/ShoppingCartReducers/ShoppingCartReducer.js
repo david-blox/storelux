@@ -16,6 +16,7 @@ const initialState = {
     totalPrice: null,
     vat: null,
     totalSum: null,
+    loading: false,
   },
 };
 
@@ -36,7 +37,6 @@ const getCartSuccess = (state, action) => {
   totalPrice.map((item) => (sum += item));
   calcVat = (sum * currentVat).toFixed(2);
   total = (sum * currentVat + sum).toFixed(2);
-  console.log(totalPrice);
   return updateObject(state, {
     items: action.cart,
     error: null,
@@ -49,6 +49,7 @@ const getCartSuccess = (state, action) => {
       totalPrice: sum,
       vat: calcVat,
       totalSum: total,
+      loading: false,
     },
   });
 };
@@ -94,6 +95,9 @@ const updateProductQuantityRequest = (state, action) => {
       item: state.product.item,
       productLoading: true,
     },
+    cartSummary: {
+      loading: true,
+    },
   });
 };
 const updateProductQuantitySuccess = (state, action) => {
@@ -103,6 +107,9 @@ const updateProductQuantitySuccess = (state, action) => {
     product: {
       item: state.product.item,
       productLoading: false,
+    },
+    cartSummary: {
+      loading: false,
     },
   });
 };

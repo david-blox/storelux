@@ -1,6 +1,7 @@
 import { takeLatest, call, put, fork, take } from "redux-saga/effects";
 import * as actions from "../shoppingCartActions/ShoppingCartActions";
 import * as api from "../../api/cartApi";
+import { toast } from "react-toastify";
 
 function* getCartByUserId(action) {
   try {
@@ -49,34 +50,13 @@ function* watchUpdateProductCartRequest() {
   );
 }
 
-// function* deleteProductFromCart(action) {
-//   try {
-//     const responseData = yield call(api.deleteProductFromCart, {
-//       token: action.payload.token,
-//       userId: action.payload.userId,
-//       productId: action.payload.productId,
-//     });
-//   } catch (e) {
-//     yield put(
-//       actions.deleteProductFromCartFailure({
-//         error: "Could not delete product from cart, please try again.",
-//       })
-//     );
-//   }
-// }
-
-// function* watchDeleteProductFromCartRequest() {
-//   yield takeLatest(
-//     actions.Types.DELETE_FROM_CART_REQUEST,
-//     deleteProductFromCart
-//   );
-// }
-
 function* deleteProductCart({ token, userId, productId }) {
   try {
     yield call(api.deleteProductFromCart, token, userId, productId);
     yield put(actions.deleteProductFromCartSuccess(productId));
     yield call(getCartByUserId, { userId, token });
+
+    yield toast.info("Product deleted successfuly from cart.");
   } catch (e) {
     yield put(
       actions.deleteProductFromCartFailure({
