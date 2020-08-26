@@ -40,6 +40,7 @@ const ShoppingCart = ({
     setErrorNessage(null);
   };
 
+
   return (
     <>
       <ErrorModal error={errorMessage} onClear={clearError} />
@@ -50,9 +51,7 @@ const ShoppingCart = ({
       )}
       {!isLoading && (
         <div className="user-cart__wrapper">
-          <ShoppingCartList
-            items={cart}
-          />
+          <ShoppingCartList items={cart} />
         </div>
       )}
     </>

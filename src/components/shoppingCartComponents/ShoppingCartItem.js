@@ -112,7 +112,12 @@ const ShoppingCartItem = (props) => {
                   <img src={bin} alt="delete" />
                 </button>
               </div>
-              <Button buttonClass="product-purchase">Purchase Item</Button>
+              <Button
+                to={`/${userId}/shoppingCart/${props.id}`}
+                buttonClass="product-purchase"
+              >
+                Order Item
+              </Button>
             </div>
           </Card>
         </li>
