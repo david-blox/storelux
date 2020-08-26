@@ -27,6 +27,10 @@ const AllProducts = ({
     if (!usersDone && !productsDone) {
       loadUsers();
       loadProducts();
+    } else if (!productsDone) {
+      loadProducts();
+    } else if (!usersDone) {
+      loadUsers();
     }
     window.scrollTo({
       behavior: "smooth",
