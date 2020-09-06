@@ -24,7 +24,8 @@ const App = ({ isAuthenticated, userId, onTryAutoSignup }) => {
   useEffect(() => {
     onTryAutoSignup();
   }, [onTryAutoSignup]);
-
+  
+  // TODO: move switches components to LoggedIn and NotLoggedIn components
   if (isAuthenticated) {
     routes = (
       <>
